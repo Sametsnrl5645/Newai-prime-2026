@@ -1,40 +1,26 @@
-name: Newai Prime Shadow Build
+name: Newai Prime Final Build
 on:
   push:
     branches: [ "main" ]
-  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Python 3.10 Kurulumu
-        uses: actions/setup-python@v4
+      - uses: actions/setup-python@v4
         with:
           python-version: '3.10'
-
-      - name: Bagimliliklari Yukle
-        run: |
-          pip install flet
-          
-      - name: Flutter SDK Kurulumu
-        uses: subosito/flutter-action@v2
+      - name: Install Flet
+        run: pip install flet
+      - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-
-      - name: APK Build (Final Operasyon)
+      - name: Build APK
         run: |
-          # Komutları en güvenli ve güncel haliyle gönderiyoruz
-          yes y | flet build apk \
-            --project "NewaiPrime" \
-            --product "Newai Prime" \
-            --icon "icon.png" \
-            --splash-img "splash_screen.png"
-
-      - name: APK Teslimatı
+          yes y | flet build apk --project "NewaiPrime" --product "Newai Prime"
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Newai-Prime-Shadow-Edition
+          name: Newai-Prime-APK
           path: build/apk/*.apk
