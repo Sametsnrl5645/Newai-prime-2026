@@ -18,7 +18,8 @@ jobs:
           channel: 'stable'
       - name: Build APK
         run: |
-          yes y | flet build apk --project "NewaiPrime" --product "Newai Prime"
+          yes y | flet build apk --project "NewaiPrime" --product "Newai Prime" --package-name "com.sametcan88.newai"
+
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
