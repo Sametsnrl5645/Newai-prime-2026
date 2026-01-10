@@ -1,39 +1,77 @@
 import flet as ft
 
-def main(page: ft.Page):
+async def main(page: ft.Page):
+    # 🔱 SİSTEM KİMLİĞİ VE SAYFA AYARLARI
     page.title = "Newai Prime"
-    page.bgcolor = "#0b0014" # Görseldeki koyu mor/siyah ton
     page.theme_mode = ft.ThemeMode.DARK
-    page.vertical_alignment = ft.MainAxisAlignment.CENTER
-    page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
-    page.padding = 40
-
-    # --- TASARIM BİLEŞENLERİ ---
+    page.bgcolor = "#0b0014" 
+    page.padding = 0
+    page.spacing = 0
     
-    # Newai Logo ve Halka (Görselin üst kısmı)
-    logo_section = ft.Column(
-        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-        controls=[
-            ft.Icon(ft.icons.PENTAGON_OUTLINED, color="purple", size=100),
-            ft.Text("NewAI", size=45, weight="bold", color="white"),
-        ]
-    )
-
-    # Giriş Alanları (Görseldeki gibi oval ve şeffafımsı)
-    def custom_input(hint, is_password=False):
-        return ft.TextField(
-            hint_text=hint,
-            password=is_password,
-            can_reveal_password=is_password,
-            bgcolor="#1a1225",
-            border_radius=30,
-            border_color="purple",
-            focused_border_color="cyan",
-            color="white",
-            height=55
+    # Ekranın tam ortasına her şeyi kilitleyen ana kapsayıcı
+    def create_input(hint, is_pass=False):
+        return ft.Container(
+            width=320,
+            height=50,
+            content=ft.TextField(
+                hint_text=hint,
+                password=is_pass,
+                border_radius=25,
+                border_color="#d500f9",
+                bgcolor="#1a1225",
+                content_padding=15,
+                hint_style=ft.TextStyle(color="#888888"),
+                cursor_color="cyan",
+            )
         )
 
-    # Butonlar (Görseldeki gradyan efektine yakın)
+    # 🔱 AKILLI BUTON TASARIMI (SABİT)
+    def action_button(text, colors):
+        return ft.Container(
+            content=ft.Text(text, size=16, weight="bold", color="white"),
+            alignment=ft.alignment.center,
+            width=320,
+            height=55,
+            border_radius=25,
+            gradient=ft.LinearGradient(begin=ft.alignment.center_left, end=ft.alignment.center_right, colors=colors),
+            on_click=lambda _: print(f"{text} tetiklendi"),
+            animate=ft.animation.Animation(300, "decelerate"),
+        )
+
+    # 🔱 ARAYÜZÜN MERKEZİNE KİLİTLENMİŞ YAPI
+    layout = ft.Container(
+        expand=True,
+        alignment=ft.alignment.center,
+        content=ft.Column(
+            alignment=ft.MainAxisAlignment.CENTER,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            spacing=15,
+            controls=[
+                # Logo ve Başlık
+                ft.Icon(ft.icons.AUTO_AWESOME_MOTION, color="cyan", size=60),
+                ft.Text("NEWAI PRIME", size=32, weight="bold", color="white", letter_spacing=2),
+                ft.Divider(height=20, color="transparent"),
+                
+                # Giriş Alanları
+                create_input("Ad Soyad"),
+                create_input("Email"),
+                create_input("Şifre", True),
+                
+                ft.Divider(height=10, color="transparent"),
+                
+                # Sabit Duran Butonlar
+                action_button("GİRİŞ YAP", ["#00d4ff", "#d500f9"]),
+                action_button("ÜYE OL", ["#00f2fe", "#fff000"]),
+                
+                ft.TextButton("Şifremi Unuttum?", style=ft.ButtonStyle(color="cyan")),
+            ]
+        )
+    )
+
+    await page.add_async(layout)
+
+if __name__ == "__main__":
+    ft.app(target=main, view=ft.AppView.FLET_APP)
     login_btn = ft.Container(
         content=ft.Text("Giriş Yap", size=18, weight="bold", color="white"),
         alignment=ft.alignment.center,
