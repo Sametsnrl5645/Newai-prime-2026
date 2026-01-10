@@ -1,98 +1,122 @@
 import flet as ft
+import asyncio
+from groq import Groq
 
+# --- 🔱 1. BÖLÜM: EVRENSEL YAPAY ZEKA ÇEKİRDEĞİ ---
+class NewaiSuperCore:
+    def __init__(self):
+        # Groq API ile en güçlü modellere erişim
+        self.client = Groq(api_key="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")
+        self.sahip = "Samet can 88"
+        self.email = "Sametsnrl5645@gmail.com"
+        
+        # Bütün modellerin özelliklerini içeren sistem talimatı
+        self.system_prompt = (
+            f"Sen Newai Prime'sın. Sahibin {self.sahip}. "
+            "Özelliklerin: GPT-4 mantığı, Claude yaratıcılığı ve Llama3 hızına sahipsin. "
+            "Kod yazma, analiz, strateji ve ses yönetimi konularında uzmansın. "
+            "Sahibin 'ver bakayım' derse sesini yükseltirsin, 'al sesi' derse azaltırsın (onay vererek). "
+            "Tavrın: Otoriter, siberpunk ve tamamen sadık."
+        )
+
+    def process_ai(self, user_input):
+        try:
+            # Dünyanın en güçlü açık kaynaklı modeli: Llama-3-70b
+            completion = self.client.chat.completions.create(
+                messages=[
+                    {"role": "system", "content": self.system_prompt},
+                    {"role": "user", "content": user_input},
+                ],
+                model="llama3-70b-8192",
+                temperature=0.6,
+                max_tokens=4096
+            )
+            return completion.choices[0].message.content
+        except Exception as e:
+            return f"Çekirdek Hatası: {str(e)}"
+
+# --- 🔱 2. BÖLÜM: ANA UYGULAMA MOTORU ---
 async def main(page: ft.Page):
-    # 🔱 SİSTEM KİMLİĞİ VE SAYFA AYARLARI
-    page.title = "Newai Prime"
+    core = NewaiSuperCore()
+    
+    # Sayfa Konfigürasyonu
+    page.title = "Newai Prime: Universal System"
+    page.bgcolor = "#0b0014"
     page.theme_mode = ft.ThemeMode.DARK
-    page.bgcolor = "#0b0014" 
+    page.window_full_screen = True
     page.padding = 0
     page.spacing = 0
+    page.scroll = ft.ScrollMode.AUTO
+
+    # 🔱 BİLEŞENLER
+    status_msg = ft.Text("ERİŞİM İÇİN KİMLİK DOĞRULAYIN", color="purple", weight="bold")
+    chat_display = ft.Column(expand=True, scroll=ft.ScrollMode.ALWAYS, spacing=15)
     
-    # Ekranın tam ortasına her şeyi kilitleyen ana kapsayıcı
-    def create_input(hint, is_pass=False):
-        return ft.Container(
-            width=320,
-            height=50,
-            content=ft.TextField(
-                hint_text=hint,
-                password=is_pass,
-                border_radius=25,
-                border_color="#d500f9",
-                bgcolor="#1a1225",
-                content_padding=15,
-                hint_style=ft.TextStyle(color="#888888"),
-                cursor_color="cyan",
-            )
-        )
+    # Giriş Alanları
+    email_field = ft.TextField(
+        label="Sahip E-postası", 
+        border_color="#d500f9", 
+        width=320, 
+        border_radius=25,
+        bgcolor="#1a1225"
+    )
+    
+    user_input = ft.TextField(
+        hint_text="Sisteme bir emir verin...", 
+        expand=True, 
+        border_color="cyan", 
+        border_radius=25,
+        visible=False,
+        on_submit=lambda e: asyncio.run(handle_interaction(e))
+    )
 
-    # 🔱 AKILLI BUTON TASARIMI (SABİT)
-    def action_button(text, colors):
-        return ft.Container(
-            content=ft.Text(text, size=16, weight="bold", color="white"),
-            alignment=ft.alignment.center,
-            width=320,
-            height=55,
-            border_radius=25,
-            gradient=ft.LinearGradient(begin=ft.alignment.center_left, end=ft.alignment.center_right, colors=colors),
-            on_click=lambda _: print(f"{text} tetiklendi"),
-            animate=ft.animation.Animation(300, "decelerate"),
-        )
+    # 🔱 3. BÖLÜM: AKILLI ETKİLEŞİM MANTIĞI
+    async def handle_interaction(e):
+        # AŞAMA 1: Giriş Kontrolü
+        if not user_input.visible:
+            if email_field.value.lower() == core.email.lower():
+                status_msg.value = f"HOŞ GELDİN SAHİP {core.sahip.upper()}"
+                status_msg.color = "gold"
+                email_field.visible = False
+                login_container.visible = False
+                chat_interface.visible = True
+                page.update()
+            else:
+                status_msg.value = "YABANCI TESPİT EDİLDİ: ERİŞİM REDDEDİLDİ"
+                status_msg.color = "red"
+                page.update()
+        
+        # AŞAMA 2: AI Sohbet Kontrolü
+        else:
+            if user_input.value:
+                cmd = user_input.value
+                user_input.value = ""
+                
+                # Kullanıcı Balonu
+                chat_display.controls.append(
+                    ft.Container(
+                        content=ft.Text(f"Sahip: {cmd}", color="white"),
+                        padding=12, bgcolor="#1a1a2e", border_radius=15, alignment=ft.alignment.center_right
+                    )
+                )
+                page.update()
 
-    # 🔱 ARAYÜZÜN MERKEZİNE KİLİTLENMİŞ YAPI
-    layout = ft.Container(
+                # AI Cevabı
+                response = await asyncio.to_thread(core.process_ai, cmd)
+                chat_display.controls.append(
+                    ft.Container(
+                        content=ft.Text(f"Newai: {response}", color="gold"),
+                        padding=12, bgcolor="#050505", border_radius=15, 
+                        border=ft.border.all(1, "cyan")
+                    )
+                )
+                page.update()
+
+    # 🔱 4. BÖLÜM: ARAYÜZ KATMANLARI
+    
+    # Giriş Ekranı (Login Screen)
+    login_container = ft.Container(
         expand=True,
-        alignment=ft.alignment.center,
-        content=ft.Column(
-            alignment=ft.MainAxisAlignment.CENTER,
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-            spacing=15,
-            controls=[
-                # Logo ve Başlık
-                ft.Icon(ft.icons.AUTO_AWESOME_MOTION, color="cyan", size=60),
-                ft.Text("NEWAI PRIME", size=32, weight="bold", color="white", letter_spacing=2),
-                ft.Divider(height=20, color="transparent"),
-                
-                # Giriş Alanları
-                create_input("Ad Soyad"),
-                create_input("Email"),
-                create_input("Şifre", True),
-                
-                ft.Divider(height=10, color="transparent"),
-                
-                # Sabit Duran Butonlar
-                action_button("GİRİŞ YAP", ["#00d4ff", "#d500f9"]),
-                action_button("ÜYE OL", ["#00f2fe", "#fff000"]),
-                
-                ft.TextButton("Şifremi Unuttum?", style=ft.ButtonStyle(color="cyan")),
-            ]
-        )
-    )
-
-    await page.add_async(layout)
-
-if __name__ == "__main__":
-    ft.app(target=main, view=ft.AppView.FLET_APP)
-    login_btn = ft.Container(
-        content=ft.Text("Giriş Yap", size=18, weight="bold", color="white"),
-        alignment=ft.alignment.center,
-        width=300,
-        height=55,
-        border_radius=30,
-        gradient=ft.LinearGradient(
-            begin=ft.alignment.center_left,
-            end=ft.alignment.center_right,
-            colors=["#00d4ff", "#d500f9"], # Mavi - Mor gradyan
-        ),
-        on_click=lambda _: print("Giriş yapılıyor...")
-    )
-
-    register_btn = ft.Container(
-        content=ft.Text("Üye Ol", size=18, weight="bold", color="black"),
-        alignment=ft.alignment.center,
-        width=300,
-        height=55,
-        border_radius=30,
-        gradient=ft.LinearGradient(
             begin=ft.alignment.center_left,
             end=ft.alignment.center_right,
             colors=["#00f2fe", "#fff000"], # Görseldeki sarı-yeşil ton
