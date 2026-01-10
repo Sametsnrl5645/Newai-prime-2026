@@ -1,39 +1,84 @@
 import flet as ft
-import time
-
-# --- AKILLI ÇEKİRDEK ---
-class NewaiCore:
-    def __init__(self):
-        self.sahip_name = "Samet can 88"
-        self.sahip_email = "Sametsnrl5645@gmail.com"
-
-    def process_intelligence(self, text):
-        cmd = text.lower()
-        if "ver bakayım" in cmd:
-            return "🔊 PROTOKOL: VER BAKAYIM AKTİF!\nSes %100."
-        elif "al sesi" in cmd:
-            return "🔈 PROTOKOL: AL SESİ AKTİF!\nSes %0."
-        return f"Emriniz işleniyor Sahip: {text}"
 
 def main(page: ft.Page):
-    core = NewaiCore()
-
-    # 🔱 MOBİL UYUMLULUK AYARLARI
     page.title = "Newai Prime"
+    page.bgcolor = "#0b0014" # Görseldeki koyu mor/siyah ton
     page.theme_mode = ft.ThemeMode.DARK
-    page.bgcolor = "#050505"
-    
-    # Pencere boyutlarını sildik, yerine sayfa hizalaması getirdik
-    page.vertical_alignment = ft.MainAxisAlignment.START
-    page.padding = 10 
-    page.expand = True # Sayfayı tamamen kapla
+    page.vertical_alignment = ft.MainAxisAlignment.CENTER
+    page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
+    page.padding = 40
 
-    # --- ARAYÜZ BİLEŞENLERİ ---
-    chat_history = ft.Column(
-        expand=True, 
-        scroll=ft.ScrollMode.HIDDEN, # Mobilde daha akıcı kaydırma
-        spacing=10
+    # --- TASARIM BİLEŞENLERİ ---
+    
+    # Newai Logo ve Halka (Görselin üst kısmı)
+    logo_section = ft.Column(
+        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+        controls=[
+            ft.Icon(ft.icons.PENTAGON_OUTLINED, color="purple", size=100),
+            ft.Text("NewAI", size=45, weight="bold", color="white"),
+        ]
     )
+
+    # Giriş Alanları (Görseldeki gibi oval ve şeffafımsı)
+    def custom_input(hint, is_password=False):
+        return ft.TextField(
+            hint_text=hint,
+            password=is_password,
+            can_reveal_password=is_password,
+            bgcolor="#1a1225",
+            border_radius=30,
+            border_color="purple",
+            focused_border_color="cyan",
+            color="white",
+            height=55
+        )
+
+    # Butonlar (Görseldeki gradyan efektine yakın)
+    login_btn = ft.Container(
+        content=ft.Text("Giriş Yap", size=18, weight="bold", color="white"),
+        alignment=ft.alignment.center,
+        width=300,
+        height=55,
+        border_radius=30,
+        gradient=ft.LinearGradient(
+            begin=ft.alignment.center_left,
+            end=ft.alignment.center_right,
+            colors=["#00d4ff", "#d500f9"], # Mavi - Mor gradyan
+        ),
+        on_click=lambda _: print("Giriş yapılıyor...")
+    )
+
+    register_btn = ft.Container(
+        content=ft.Text("Üye Ol", size=18, weight="bold", color="black"),
+        alignment=ft.alignment.center,
+        width=300,
+        height=55,
+        border_radius=30,
+        gradient=ft.LinearGradient(
+            begin=ft.alignment.center_left,
+            end=ft.alignment.center_right,
+            colors=["#00f2fe", "#fff000"], # Görseldeki sarı-yeşil ton
+        )
+    )
+
+    # --- SAYFAYA EKLEME ---
+    page.add(
+        logo_section,
+        ft.VerticalDivider(height=20, color="transparent"),
+        custom_input("Ad Soyad"),
+        ft.VerticalDivider(height=10, color="transparent"),
+        custom_input("Email"),
+        ft.VerticalDivider(height=10, color="transparent"),
+        custom_input("Şifre", True),
+        ft.VerticalDivider(height=30, color="transparent"),
+        login_btn,
+        ft.VerticalDivider(height=15, color="transparent"),
+        register_btn,
+        ft.Text("Zaten hesabın var mı? Giriş Yap", color="cyan", size=12)
+    )
+
+if __name__ == "__main__":
+    ft.app(target=main)
 
     def process_command(e):
         if input_field.value:
