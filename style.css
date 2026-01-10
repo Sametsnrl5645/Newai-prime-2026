@@ -1,0 +1,72 @@
+body {
+    background-color: #050505;
+    color: #ffffff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    overflow: hidden;
+}
+
+.glass-container {
+    background: rgba(20, 20, 20, 0.8);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 204, 0, 0.2);
+    padding: 40px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 1), 0 0 20px rgba(255, 204, 0, 0.1);
+    width: 400px;
+}
+
+h1 {
+    color: #ffcc00;
+    letter-spacing: 5px;
+    font-size: 2rem;
+    margin-bottom: 10px;
+    text-shadow: 0 0 15px rgba(255, 204, 0, 0.5);
+}
+
+.input-group input {
+    width: 100%;
+    padding: 15px;
+    margin: 10px 0;
+    background: #000;
+    border: 1px solid #333;
+    color: #ffcc00;
+    border-radius: 8px;
+    outline: none;
+    transition: 0.3s;
+}
+
+.input-group input:focus {
+    border-color: #ffcc00;
+    box-shadow: 0 0 10px rgba(255, 204, 0, 0.3);
+}
+
+.btn-gold {
+    width: 110%;
+    padding: 15px;
+    background: #ffcc00;
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: 0.3s;
+    letter-spacing: 2px;
+}
+
+.btn-gold:hover {
+    background: #e6b800;
+    transform: scale(1.02);
+}
+
+.footer {
+    margin-top: 30px;
+    font-size: 0.7rem;
+    color: #555;
+}
