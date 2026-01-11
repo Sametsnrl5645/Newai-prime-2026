@@ -12,7 +12,6 @@ author_email = "Sametsnrl5645@gmail.com"
 formal_name = "Newai Prime"
 description = "Sonsuz Bulut Hafızalı ve Tam Yetkili Siber Güvenlik Sistemi"
 sources = ["src/newai_prime"]
-main_module = "newai_prime.main"
 
 # 🔱 GÖRSEL MÜHÜRLERİN YOLLARI (Burayı güncelle)
 icon = "src/newai_prime/icon"  # Uzantı (.png) yazmana gerek yok, BeeWare kendi bulur
