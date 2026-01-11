@@ -3,7 +3,8 @@ project_name = "Newai Prime"
 bundle = "com.sametcan88.newai"
 version = "1.0.1"
 url = "https://github.com/Sametsnrl5645/Newai-Prime-2026"
-license = "MIT"
+[project]
+license = { text = "MIT" }
 author = "Samet Can 88"
 author_email = "Sametsnrl5645@gmail.com"
 
