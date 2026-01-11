@@ -15,26 +15,26 @@ class NewaiBrain:
             "hitap": "sahip"
         }
 
-        # --- 🔱 BULUT HAFIZA YOLU ---
-        self.cloud_path = r"C:\Newai\Bulut"
+        # --- 🔱 ANDROID UYUMLU BULUT YOLU ---
+        # Kullanıcın ev dizininde bir klasör oluşturur (Android ve Windows uyumlu)
+        self.cloud_path = os.path.join(os.path.expanduser("~"), "Newai_Bulut")
         if not os.path.exists(self.cloud_path):
-            try: os.makedirs(self.cloud_path)
-            except: pass
+            try: 
+                os.makedirs(self.cloud_path)
+            except: 
+                pass
 
     def get_cloud_files(self):
-        """Bulut depolamadaki dosyaları listeler."""
         if os.path.exists(self.cloud_path):
             return os.listdir(self.cloud_path)
         return []
 
     def ses_kontrol(self, komut):
-        """Akıllı ses kontrol protokolü."""
+        # Android'de nircmd çalışmayacağı için burayı güvenli hale getirdik
         if "ver bakayım" in komut:
-            os.system("nircmd.exe changesysvolume 2000") # Sesi artırır
-            return "Ses seviyesi yükseltildi sahip. Otorite duyuluyor!"
+            return "Ses seviyesi kontrolü Android protokolünde hazırlanıyor, sahip!"
         elif "al sesi" in komut:
-            os.system("nircmd.exe changesysvolume -2000") # Sesi azaltır
-            return "Ses kısıldı sahip. Sessizlik hakim."
+            return "Sessizlik protokolü devreye alınıyor, sahip."
         return None
 
     def giris_kontrol(self, email, sifre):
@@ -43,11 +43,9 @@ class NewaiBrain:
     def cevap_ver(self, mesaj):
         mesaj_low = mesaj.lower()
         
-        # Önce fiziksel komutları kontrol et
         ses_sonucu = self.ses_kontrol(mesaj_low)
         if ses_sonucu: return ses_sonucu
 
-        # Bulut dosyalarını sisteme tanıt
         dosyalar = self.get_cloud_files()
         file_info = ", ".join(dosyalar) if dosyalar else "Bulut şu an boş."
 
@@ -63,7 +61,6 @@ class NewaiBrain:
         except Exception as e:
             return f"Parazit: {str(e)}"
 
-        # brain.py dosyası
-    def siber_guvenlik_taramasi():
-        return "Sistem tarandı: Tehdit yok, Sahip!"
-        
+# Statik fonksiyon sınıfa dahil değilse dışarıda kalabilir
+def siber_guvenlik_taramasi():
+    return "Sistem tarandı: Tehdit yok, Sahip!"
