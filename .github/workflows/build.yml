@@ -1,36 +1,49 @@
-name: Newai Prime Final Build
-on:
-  push:
-    branches: [ "main" ]
+# ==========================================================
+# NEWAI PRIME 2026 - APK INŞA PROTOKOLÜ (BUILD.YAML)
+# Sahip: Samet Can 88
+# ==========================================================
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+app:
+  name: "Newai Prime"
+  bundle: "com.newai.prime"
+  version: "1.0.1"
+  display_name: "🔱 Newai Prime"
+  author: "Samet Can 88"
+  description: "Sonsuz Bulut Hafızalı ve Siber Güvenlik Kalkanlı Yapay Zeka"
 
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
+android:
+  # 🔱 GEREKLİ KÜTÜPHANELER (Bu kısımlar olmazsa Groq çalışmaz!)
+  requires:
+    - toga-android
+    - groq
+    - httpx
+    - certifi
 
-      - name: Create Requirements File
-        run: |
-          echo "flet" > requirements.txt
-          echo "groq" >> requirements.txt
+  # 🔱 ANDROID YETKİLERİ (Ses ve Bulut Hafıza için)
+  permissions:
+   "INTERNET",                         # Groq Beyin bağlantısı
+    "ACCESS_NETWORK_STATE",             # İnternet kontrolü
+    "WRITE_EXTERNAL_STORAGE",           # Dosya yazma (Bulut)
+    "READ_EXTERNAL_STORAGE",            # Dosya okuma (Bulut)
+    "CAMERA",                           # 📷 Kamera özelliği
+    "RECORD_AUDIO",                     # 🎤 Mikrofon (Sesli komut)
+    "MODIFY_AUDIO_SETTINGS",            # 🔊 Ses seviyesi yönetimi
+    "ACCESS_COARSE_LOCATION",           # 📍 Konum (Yaklaşık)
+    "ACCESS_FINE_LOCATION",             # 📍 Konum (Tam nokta)
+    "BLUETOOTH",                        # 🔵 Bluetooth cihazlar
+    "BLUETOOTH_ADMIN",                  # 🔵 Bluetooth yönetimi
+    "BLUETOOTH_CONNECT",                # 🔵 Yakındaki cihazlara bağlanma
+    "BLUETOOTH_SCAN",                   # 🔵 Cihaz tarama
+    "READ_MEDIA_IMAGES",                # 🖼️ Fotoğraflar erişimi
+    "READ_MEDIA_VIDEO",                 # 🎬 Video erişimi
+    "READ_MEDIA_AUDIO",                 # 🎵 Müzik ve Ses dosyaları
+    "MANAGE_EXTERNAL_STORAGE",          # 📂 Tüm dosya sistemi yönetimi
 
-      - name: Install Dependencies
-        run: |
-          pip install flet groq
-
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-
-      - name: Build APK
-        run: flet build apk --org "com.sametcan88" --product "Newai Prime" --build-number 2 --build-version 2.0.1
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: Newai-Prime-APK
-          path: build/apk/*.apk
+  # 🔱 GÖRSEL AYARLAR
+  build_variant: release
+  icon: "assets/newai_icon.png"  # Varsa ikonun yolu
+  splash_screen: "assets/splash.png"
+  
+  # 🔱 SİSTEM AYARLARI
+  min_sdk_version: 24  # Android 7.0 ve üzeri
+  target_sdk_version: 33 # Android 13 uyumluluğu
