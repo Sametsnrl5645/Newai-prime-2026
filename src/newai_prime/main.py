@@ -3,6 +3,12 @@ import asyncio
 from groq import Groq
 from brain import NewaiBrain
 
+from .brain import NewaiBrain, siber_guvenlik_taramasi
+
+# Kullanırken:
+brain = NewaiBrain()
+print(brain.cevap_ver("Merhaba"))
+
 async def main(page: ft.Page):
     # 🔱 1. HATA ÖNLEME: CSS Kontrolü
     # Eğer style.css yoksa sistem siyah ekran vermesin diye manuel ayar yapıyoruz
