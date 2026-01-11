@@ -20,12 +20,12 @@ jobs:
 
       - name: Build Android APK
         run: |
-          # 15. SATIR BURAYA DENK GELİYOR - HATASIZ KOMUTLAR:
           briefcase build android --no-input
-          briefcase package android --no-input --adhoc
+          # 🔱 BURAYI GÜNCELLE: --format apk ekliyoruz
+          briefcase package android --no-input --adhoc --format apk
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Newai-Prime-APP
-          path: dist/
+          name: Newai-Prime-APK-Dosyasi
+          path: dist/*.apk  # Sadece uzantısı .apk olanları yukarı yükle
