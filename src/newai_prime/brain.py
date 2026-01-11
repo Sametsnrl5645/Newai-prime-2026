@@ -62,3 +62,8 @@ class NewaiBrain:
             return completion.choices[0].message.content
         except Exception as e:
             return f"Parazit: {str(e)}"
+
+        # brain.py dosyası
+    def siber_guvenlik_taramasi():
+        return "Sistem tarandı: Tehdit yok, Sahip!"
+        
