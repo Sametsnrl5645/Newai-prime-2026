@@ -19,6 +19,7 @@ splash_screen = "src/newai_prime/splash_screen"
 
 # 🔱 ÇEKİRDEK BAĞIMLILIKLAR
 requires = [
+    "flet",         # 🔱 Bu olmazsa arayüz motoru çalışmaz!
     "toga-android",
     "groq",
     "httpx",
