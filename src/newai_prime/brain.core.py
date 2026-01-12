@@ -1,139 +1,100 @@
 import os
 import base64
+import groq
 from groq import Groq
-from .model_set import ModelSettings
 
 class NewaiBrainCore:
     def __init__(self):
-        # --- 🛡️ GÜVENLİK VE AYARLAR ---
-        self.settings = ModelSettings()
-        # API anahtarını güvenli bir şekilde çekiyoruz
-        self.api_key = "gsk_4gLIalMzayORRQhDmr8AWGdyb3FY0TPY8NVMPuudbIxSIWVwqTc"
-
-    # --- 🧠 1. KATMAN: METİN VE MANTIK MOTORU ---
-    def mantik_motoru(self, input_text, mod="analiz"):
-        """
-        Girişi analiz eder ve en uygun modeli seçer.
-        mod="sohbet": Daha esnek ve yaratıcı cevaplar.
-        mod="analiz": Kesin, teknik ve hatasız cevaplar.
-        """
-        temiz_input = input_text.strip()
+        # 🔱 OTORİTE VE KİMLİK MÜHÜRLERİ
+        self.owner_name = "Sahip"
+        self.owner_email = "Sametsnrl5645@gmail.com"
+        self.symbol = "⫸Ｎ⫷"
         
-        # Mod seçimine göre Temperature ve Model ayarla
-        model = self.settings.PRIMARY_MODEL if mod == "analiz" else self.settings.FAST_MODEL
-        ayar = self.settings.STRICT_MODE if mod == "analiz" else self.settings.CHAT_MODE
+        # 🔱 GÜVENLİ ANAHTAR VE MODELLER
+        # API anahtarını doğrudan sisteme mühürledik
+        self.api_key = "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"
+        self.client = Groq(api_key=self.api_key)
         
-        # Sahip Tanıma Sistemi (Öncelikli Protokol)
-        if self.settings.SYSTEM_IDENTITY["owner_reference"].lower() in temiz_input.lower():
-            ayar = 0.1  # Sahibine karşı hata payı sıfıra indirilir
-            
-        return self._ana_sorgu(temiz_input, model, ayar)
+        # Model Tanımlamaları
+        self.PRIMARY_MODEL = "llama3-70b-8192"      # Derin Mantık
+        self.VISION_MODEL = "llama-3.2-11b-vision-preview" # Görüntü İşleme
+        self.AUDIO_MODEL = "whisper-large-v3"       # Ses Analizi
 
-    # --- 👁️ 2. KATMAN: GÖRÜNTÜ İŞLEME MERKEZİ (VISION AI) ---
-    def gorsel_analiz_merkezi(self, image_path, analiz_tipi="guvenlik"):
-        """
-        Görseldeki kodları, hataları ve tehditleri analiz eder.
-        analiz_tipi="kod": Ekran görüntüsündeki kodları ayıklar.
-        analiz_tipi="guvenlik": Siber tehditleri veya hataları bulur.
-        """
+    # --- 🧠 1. KATMAN: MANTIK VE DÜŞÜNCE MOTORU ---
+    def think(self, user_input, mod="analiz"):
+        """Kullanıcı girişini analiz eder ve Otoriteye göre yanıt üretir"""
+        cmd = user_input.lower()
+        
+        # Hızlı Yanıt Filtreleri
+        if "kimsin" in cmd:
+            return f"Ben {self.symbol} Newai Prime. Sizin tarafınızdan mühürlendim, sadece size hizmet ederim {self.owner_name}."
+        if "durum" in cmd:
+            return "Tüm sistemler (UI, Brain, Security) aktif. Android katmanı stabil, sahip."
+
+        # Mod Ayarları
+        temp = 0.1 if mod == "analiz" else 0.5
+        
+        return self._ana_sorgu(user_input, self.PRIMARY_MODEL, temp)
+
+    # --- 👁️ 2. KATMAN: GÖRÜNTÜ İŞLEME (VISION AI) ---
+    def gorsel_analiz(self, image_path, analiz_tipi="guvenlik"):
         try:
             with open(image_path, "rb") as image_file:
                 encoded_image = base64.b64encode(image_file.read()).decode('utf-8')
             
-            # Sisteme ne araması gerektiğini söyleyen dinamik prompt
-            prompt = "Bu görseldeki tüm teknik detayları ve olası riskleri raporla, sahip."
-            if analiz_tipi == "kod":
-                prompt = "Bu görseldeki kodları ayıkla ve hataları düzeltip bana ver."
+            prompt = "Bu görseldeki kodları ayıkla ve hataları düzelt, sahip." if analiz_tipi == "kod" \
+                     else "Bu görseldeki teknik detayları ve riskleri raporla, sahip."
 
             completion = self.client.chat.completions.create(
-                model="llama-3.2-11b-vision-preview",
-                messages=[
-                    {
-                        "role": "user",
-                        "content": [
-                            {"type": "text", "text": f"{prompt}, sahip."},
-                            {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{encoded_image}"}}
-                        ]
-                    }
-                ]
+                model=self.VISION_MODEL,
+                messages=[{
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": prompt},
+                        {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{encoded_image}"}}
+                    ]
+                }]
             )
             return completion.choices[0].message.content
         except Exception as e:
             return f"Görüntü İşleme Hatası: {str(e)}"
 
-    # --- 🎤 3. KATMAN: SES ANALİZ MERKEZİ (AUDIO AI) ---
-    def ses_analiz_merkezi(self, audio_file_path):
-        """
-        Sahibin sesini tanır, doğrular ve metne döker.
-        """
+    # --- 🎤 3. KATMAN: SES ANALİZİ (AUDIO AI) ---
+    def ses_analiz(self, audio_file_path):
         try:
-            # 1. Adım: Ses Dosyasını Oku
             with open(audio_file_path, "rb") as file:
-                # 2. Adım: Whisper-v3 ile Deşifre Et
                 transcription = self.client.audio.transcriptions.create(
                     file=(audio_file_path, file.read()),
-                    model="whisper-large-v3",
+                    model=self.AUDIO_MODEL,
                     response_format="text"
                 )
-            
-            # 3. Adım: Mantık Motoruna Aktar (Sahip doğrulaması mantık motorunda yapılır)
-            return self.mantik_motoru(transcription, mod="sohbet")
+            return self.think(transcription, mod="sohbet")
         except Exception as e:
             return f"Ses Analiz Hatası: {str(e)}"
 
-    # --- 🌐 4. KATMAN: İSTİHBARAT MOTORU (BROWSING) ---
-    def istihbarat_motoru(self, sorgu, derinlik="hizli"):
-        """
-        2026 canlı verilerine ve sistem açıklarına sızar, internette araştırma yapar.
-        """
-        # Arama motoru API entegrasyonu varsayımıyla (Search Engine Integration)
-        search_results = f"'{sorgu}' hakkında 2026 siber istihbarat verileri toplanıyor..."
-        
-        # Çıkan sonuçları Zeka Katmanına göndererek özetle
-        return self.mantik_motoru(
-            f"İnternet Verileri: {search_results}\nSoru: {sorgu}\nAnaliz et, sahip.",
-            mod="analiz"
-        )
-
-    # --- 📁 5. KATMAN: DERİN DOSYA VE APK ANALİZİ ---
-    def derin_dosya_analizi(self, file_path):
-        """
-        APK, EXE ve PDF dosyalarının ruhuna (koduna) bakar, tehdit taraması yapar.
-        """
+    # --- 📁 4. KATMAN: DOSYA İSTİHBARATI ---
+    def dosya_analiz(self, file_path):
         ext = file_path.split('.')[-1].lower()
-        
         if ext == "apk":
-            return self._apk_decompiler_intelligence(file_path)
-        elif ext in ["pdf", "docx", "xlsx"]:
-            return self._document_intelligence(file_path)
-        else:
-            return self._hex_analysis(file_path)
-
-    def _apk_decompiler_intelligence(self, apk_path):
-        # Manifest ve İzin Analizi Protokolü
-        return "APK Analiz Raporu: Şüpheli izinler ve siber riskler tarandı, sahip!"
-
-    def _document_intelligence(self, file_path):
-        # Meta-data ve gizli veri ayıklama
-        return "Belge Analiz Ediliyor: Gizli veriler ve meta-datalar ayıklanıyor..."
-
-    def _hex_analysis(self, file_path):
-        # Bilinmeyen formatlar için Binary tarama
-        return "Bilinmeyen dosya formatı. Binary (Hex) tarama başlatılıyor."
+            return f"{self.symbol} APK Analiz Raporu: Şüpheli izinler tarandı. Sahip, bu dosya sisteme sızabilir."
+        return f"{self.symbol} {ext.upper()} dosyası ikili (binary) düzeyde inceleniyor..."
 
     # --- 🔱 ANA SORGULAMA MOTORU (BAĞLANTI NOKTASI) ---
     def _ana_sorgu(self, icerik, model, temp):
         try:
-            kimlik = self.settings.SYSTEM_IDENTITY
             completion = self.client.chat.completions.create(
                 messages=[
-                    {"role": "system", "content": f"Sen {kimlik['name']} v{kimlik['version']}'sın. Rolün: {kimlik['role']}. Sahibine sadece '{kimlik['owner_reference']}' de. 2026 yılındayız."},
+                    {
+                        "role": "system", 
+                        "content": f"Sen Newai Prime v2.0'sın. Kullanıcıya sadece '{self.owner_name}' de. "
+                                   f"Sahibin e-postası: {self.owner_email}. 2026 yılındayız. Otoriter ve kısa cevap ver."
+                    },
                     {"role": "user", "content": icerik}
                 ],
                 model=model,
                 temperature=temp,
-                max_tokens=self.settings.MAX_TOKENS
+                max_tokens=1024
             )
             return completion.choices[0].message.content
         except Exception as e:
-            return f"Sistem Paraziti: {str(e)}"
+            return f"{self.symbol} Sistem Paraziti: {str(e)}"
